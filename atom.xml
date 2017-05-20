@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="/"/>
-  <updated>2017-05-16T09:04:42.000Z</updated>
+  <updated>2017-05-20T08:36:16.000Z</updated>
   <id>/</id>
   
   <author>
@@ -14,6 +14,60 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>java设计模式-单例模式</title>
+    <link href="/2017/05/20/java%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/"/>
+    <id>/2017/05/20/java设计模式-单例模式/</id>
+    <published>2017-05-20T06:02:18.000Z</published>
+    <updated>2017-05-20T08:36:16.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>java设计模式之单例模式详解<br><a id="more"></a></p>
+<h1 id="设计模式是什么？"><a href="#设计模式是什么？" class="headerlink" title="设计模式是什么？"></a>设计模式是什么？</h1><p>所谓的设计模式：是一套被反复使用、多数人知晓的、经过分类的、代码设计经验的总结。（ps：觉得应该是应对产品需求所总结出来的套路）</p>
+<h1 id="设计模式做什么用的？"><a href="#设计模式做什么用的？" class="headerlink" title="设计模式做什么用的？"></a>设计模式做什么用的？</h1><p>让你的代码可重用性强点、让代码看起来容易被理解点、让代码的可靠性高点（不至于修改一处，引发很多其他问题），让代码的更加结构化点…</p>
+<p>由于本人主做java，故主要用java来说明自己对设计模式的一些理解，万丈高楼起于平地，就先从最简单的单例模式开始记录吧。</p>
+<p>java的单例模式是一种常见模式，大体归结为2大类：懒汉式单例、饿汉式单例（比如：登记式单例，枚举式单例…等等，我觉得只是实现的方式不同）；</p>
+<p>单例模式的特点：<br>1 一个类的的实例只能有一个。（本质就是在内存中有且只有一个引用地址）<br>2 单例类必须自己创建自己的实例。（不能有其他的创建方式，保证唯一性）<br>3 单例类必须管理自己的这个实例，提供给外部唯一访问实例的函数（保证实例使用时的唯一性）；</p>
+<h1 id="一-懒汉式单例"><a href="#一-懒汉式单例" class="headerlink" title="一 懒汉式单例"></a>一 懒汉式单例</h1><p>只有在自身需要的时候才会创建，没有提前创建好存在内存中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">//懒汉式单例类</div><div class="line">public class Singleton &#123;  </div><div class="line">  private Singleton() &#123;&#125;  //构造方法私有化，保证创建方法唯一</div><div class="line">  private static Singleton single=null;  </div><div class="line">  //提供对外的唯一访问方法</div><div class="line">  public static Singleton getInstance() &#123;  </div><div class="line">    if (single == null) &#123;    </div><div class="line">        single = new Singleton();  </div><div class="line">    &#125;    </div><div class="line">        return single;  </div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们都知道java代码会被编译程class字节码文件，然后在JVM中执行，那么在当前的JVM中，这个类的内存引用地址就应该是唯一的，Singleton类在初次调用是实例化自己，通过构造方法的private私有化，保证不能被外部创建，同时提供getInstance()方法，唯一访问方式（途径），管理好自己的实例。</p>
+<font color="#FF0000" size="3">注：因为java存在反射的机制，它是能够实例化构造方法为private的类，我们也可以修改构造器，让它在创建第二个实例的时候抛异常。</font>
+
+<p>以上简单的例子，在java的编程中并不完善，因为我们还要考虑到多线程的情况，如果多条线程中同时使用Singleton类的实例，通过getInstance()方法，如果当前类还没有被实例化那么就会new Singleton（），创建引用地址并且分配内存，如果没有同步，就容易出现问题：例如（当Singleton还是null的时候 A线程调用getInstance()，程序会去new Singleton(),假使此刻Singleton的对象还在创建中，B线程又调用了getInstance（），那么就又会去创建，此时就有可能内存中有2个Singleton对象。） 因此我们还可以这样改造一下这个getInstance（）方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public static synchronized Singleton getInstance() &#123;  </div><div class="line">         if (single == null) &#123;    </div><div class="line">             single = new Singleton();  </div><div class="line">         &#125;    </div><div class="line">        return single;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们试着给这个方法加上synchronized ，使它变成同步方法，或者：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public static Singleton getInstance() &#123;  </div><div class="line">        if (singleton == null) &#123;    </div><div class="line">            synchronized (Singleton.class) &#123;    </div><div class="line">               if (singleton == null) &#123;    </div><div class="line">                  singleton = new Singleton();   </div><div class="line">               &#125;    </div><div class="line">            &#125;    </div><div class="line">        &#125;    </div><div class="line">        return singleton;   </div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>我们用当前对象作为同步锁，2次非null判断，同时lock object也是可以的，这样就可以避免上述所说的情况。</p>
+<h1 id="二-饿汉式单例"><a href="#二-饿汉式单例" class="headerlink" title="二 饿汉式单例"></a>二 饿汉式单例</h1><p>当使用这个类的时候 本身作为静态成员变量立马被创建的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">//饿汉式单例类.在类初始化时，已经自行实例化   </div><div class="line">public class Singleton1 &#123;  </div><div class="line">    private Singleton1() &#123;&#125;  </div><div class="line">    private static final Singleton1 single = new Singleton1();  </div><div class="line">    //静态工厂方法   </div><div class="line">    public static Singleton1 getInstance() &#123;  </div><div class="line">        return single;  </div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>饿汉式单例在类创建的同时本身作为静态的成员变量就已经被创建好，所以我们通过getInstance()获取使用时永远都是，所以天生是线程安全的single这个静态实例。因此这种写法也是线程安全的。</p>
+<p>以上是单例模式的简单形式，在实际应用中，往往有时候还是会出现各种坑的，所以我们还可以继续完善一下。</p>
+<h1 id="三-单例的不同实现形式和优化"><a href="#三-单例的不同实现形式和优化" class="headerlink" title="三 单例的不同实现形式和优化"></a>三 单例的不同实现形式和优化</h1><p>1 兼顾线程安全和效率的写法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public class Singleton &#123;</div><div class="line">   private static volatile Singleton singleton = null;  </div><div class="line">   private Singleton()&#123;&#125;  </div><div class="line">   public static Singleton getSingleton()&#123;</div><div class="line">       if(singleton == null)&#123;</div><div class="line">           synchronized (Singleton.class)&#123;</div><div class="line">               if(singleton == null)&#123;</div><div class="line">                   singleton = new Singleton();</div><div class="line">               &#125;</div><div class="line">           &#125;</div><div class="line">       &#125;</div><div class="line">       return singleton;</div><div class="line">   &#125;    </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这种写法被称为“双重检查锁”，就是在getSingleton()方法中，进行两次null检查。看似多此一举，但实际上却极大提升了并发度，进而提升了性能。为什么可以提高并发度呢？就像上面说的，在单例中new的情况非常少，绝大多数都是可以并行的读操作。因此在加锁前多进行一次null检查就可以减少绝大多数的加锁操作，执行效率提高的目的也就达到了。</p>
+<font color="#FF0000" size="3">注： volatile 关键字修饰 JDK1.5之前对这个支持不是很好。</font>
+
+<p>2 静态内部类法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class Singleton &#123;</div><div class="line">    private static class Holder &#123;</div><div class="line">        private static Singleton singleton = new Singleton();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Singleton()&#123;&#125;</div><div class="line"></div><div class="line">    public static Singleton getSingleton()&#123;</div><div class="line">        return Holder.singleton;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>把Singleton实例放到一个静态内部类中，这样避免了静态实例在Singleton类加载的时候就创建对象，并且由于静态内部类只会被加载一次，所以这种写法也是线程安全的.</p>
+<p>3 枚举写法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public enum Singleton &#123;</div><div class="line">    INSTANCE;</div><div class="line">    private String name;</div><div class="line">    public String getName()&#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line">    public void setName(String name)&#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>使用枚举除了线程安全和防止反射强行调用构造器之外，还提供了自动序列化机制，防止反序列化的时候创建新的对象。个人一般在java中很少写枚举，占用资源多尤其在android的开发中不建议使用。</p>
+<p>4 登记式单例</p>
+<p>原理： 登记式单例实际上维护了一组单例类的实例，将这些实例存放在一个Map（登记薄）中，对于已经登记过的实例，则从Map直接返回，对于没有登记的，则先登记，然后返回。</p>
+<p>这个可以忽略，我想也几乎没人去这样写的吧。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><h2 id="1-饿汉式和懒汉式区别："><a href="#1-饿汉式和懒汉式区别：" class="headerlink" title="1 饿汉式和懒汉式区别："></a>1 饿汉式和懒汉式区别：</h2><p>懒汉模式在运行的时候 获取对象比较慢，但是加载类的时候比较快。<br>饿汉模式是在运行的时候获取对象较快，加载类的时候慢。</p>
+<h2 id="2-线程安全："><a href="#2-线程安全：" class="headerlink" title="2 线程安全："></a>2 线程安全：</h2><p>懒汉模式一是般非线程安全的，所以在写的同时注意同步。<br>饿汉式一般就是线程安全的。</p>
+<h2 id="3-序列化与反序列化安全："><a href="#3-序列化与反序列化安全：" class="headerlink" title="3 序列化与反序列化安全："></a>3 序列化与反序列化安全：</h2><p> 对象在序列化后，如果反序列化又可能会创建新的对象，枚举单例写法提供反序列化机制可以避免此类问题。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;java设计模式之单例模式详解&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="java 设计模式 android" scheme="/tags/java-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-android/"/>
+    
+  </entry>
   
   <entry>
     <title>ImageView的scaleType属性分析结果</title>
@@ -90,7 +144,7 @@
     <link href="/2017/05/15/AndroidStudio%E5%8F%8A%E5%BC%82%E5%B8%B8%E9%97%AE%E9%A2%98%E8%AE%B0%E5%BD%95/"/>
     <id>/2017/05/15/AndroidStudio及异常问题记录/</id>
     <published>2017-05-15T09:16:58.000Z</published>
-    <updated>2017-05-16T01:56:58.000Z</updated>
+    <updated>2017-05-20T07:15:38.000Z</updated>
     
     <content type="html"><![CDATA[<p>记录AndroidStudio使用中问题和开发中异常…<br><a id="more"></a></p>
 <p>1 首次启动studio卡死解决：到android studio的安装目录的bin目录下去找这个文件：idea.properties 文件，在文件的最后追加这样一句话即可：disable.android.first.run=true</p>
@@ -106,32 +160,19 @@
 <p>具体参见链接地址：</p>
 <p><a href="http://www.jianshu.com/p/e1c0b46e317c" target="_blank" rel="external">http://www.jianshu.com/p/e1c0b46e317c</a></p>
 <p>3 加快android studio的运行速度：进入AS安装目录bin下面，找到studio64.exe.vmoptions文件，进入从上到下第二个开始一次修改为，1500m,500m，96m之后重新打开AS即可。</p>
-<p>4 在android studio中指定（替换）keystore签名文件首先在build下点击genereta singled APK,之后完善对应信息并且最后选择debug在finsh。（clean一下）之后在使用项目的build gradle文件中android{}下面配置如下片段例如：</p>
-<p>signingConfigs {</p>
-<pre><code>config {
-keyAlias &apos;123&apos;
-keyPassword &apos;123&apos;
-storeFile file(&apos;签名文件路径&apos;)
-storePassword &apos;123&apos;
-}
-</code></pre><p>}</p>
+<p>4 在android studio中指定（替换）keystore签名文件首先在build下点击genereta singled APK,之后完善对应信息并且最后选择debug在finsh。（clean一下）之后在使用项目的build gradle文件中android{}下面配置如下片段例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">signingConfigs &#123;</div><div class="line">    config &#123;</div><div class="line">    keyAlias &apos;123&apos;</div><div class="line">    keyPassword &apos;123&apos;</div><div class="line">    storeFile file(&apos;签名文件路径&apos;)</div><div class="line">    storePassword &apos;123&apos;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>最后clean一下项目，运行即可</p>
 <p>5 adnroid studio下ndk使用<br>  1 下载ndk<br>  2 配置ndk环境变量<br>  3 在cmd中进入到对应到libs库下面 的so库文件目录，之后执行ndk-buil重新编译。</p>
 <p>6 dexDebug ExecException finished with non-zero exit value 2 异常<br>  需要在gradle中配置下面的代码，原因是引用了多个libraries文件</p>
-<p>defaultConfig {</p>
-<pre><code>multiDexEnabled true
-</code></pre><p>}</p>
-<p>7 Execution failed for task ‘:app:transformClassesWithJarMergingForDebug’.</p>
-<blockquote>
-<p>com.android.build.api.transform.ransformException:java.util.zip.ZipException:duplicate entry:android/support/v4/app/BackStackState$1.class</p>
-</blockquote>
-<p> 原因：在所添加的jar包或aar包中也引用了support-V4,与工程中引用的相冲突<br>Ctrl+N –&gt; 在搜索框中输入BackStackState –&gt; 查找到所有引用该类的类，这些类即为引起冲突的类<br>去掉本工程中gradle中用于引用有冲突的包的代码或者将冲突的代码从jar包或aar包中移除，确保一个module中只引用了一份相同的第三方包 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">defaultConfig &#123;</div><div class="line">    multiDexEnabled true</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>7 Execution failed for task ‘:app:transformClassesWithJarMergingForDebug’.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">com.android.build.api.transform.ransformException:java.util.zip.ZipException:duplicate entry:android/support/v4/app/BackStackState$1.class</div></pre></td></tr></table></figure></p>
+<p>原因：在所添加的jar包或aar包中也引用了support-V4,与工程中引用的相冲突<br>Ctrl+N –&gt; 在搜索框中输入BackStackState –&gt; 查找到所有引用该类的类，这些类即为引起冲突的类<br>去掉本工程中gradle中用于引用有冲突的包的代码或者将冲突的代码从jar包或aar包中移除，确保一个module中只引用了一份相同的第三方包</p>
 <p>8 Could not find property” error. signingConfigs(配置打包签名的时候，提示找不到这个属性签名文件)</p>
 <p>解决：在gradle的文件中把signingConfigs的配置放在buildTypes类型的代码上面 （gradle 按照顺序执行）</p>
 <p>9 解决Android Studio编译后安装apk报错：The APK file does not exist on disk<br>  解决：打开当前的工程，在最右侧的gradle中重新build一下，在编译安装</p>
 <p>10 android wifi连接adb<br> cmd中执行 adb tcpip 5555<br> 之后执行 adb connect (手机wifi地址，wifi搞基设置中查看)：5555  </p>
 <p>11 android studio中clean或者build出现如下异常</p>
-<p><img src="http://opdge5lf7.bkt.clouddn.com/1.png" alt="image"> </p>
+<p><img src="http://opdge5lf7.bkt.clouddn.com/1.png" alt="image"></p>
 <p>出现原因：因为当前项目下对应的 .gradle中的编译缓存文件损坏，<br>导致每次编译读取缓存中的属性，最终每次出错。</p>
 <p>解决办法：进入当前项目下，找到.gradle文件，在当前gradle版本文件夹下面找到taskArtifacts文件夹<br>整个删除，重新clean生成，就ok。</p>
 <p>删除位置：<img src="http://opdge5lf7.bkt.clouddn.com/2.png" alt="image"></p>]]></content>

@@ -22,7 +22,7 @@
 <meta property="og:description" content="记录AndroidStudio使用中问题和开发中异常…">
 <meta property="og:image" content="http://opdge5lf7.bkt.clouddn.com/1.png">
 <meta property="og:image" content="http://opdge5lf7.bkt.clouddn.com/2.png">
-<meta property="og:updated_time" content="2017-05-16T01:56:58.000Z">
+<meta property="og:updated_time" content="2017-05-20T07:15:38.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="AndroidStudio及异常问题记录">
 <meta name="twitter:description" content="记录AndroidStudio使用中问题和开发中异常…">
@@ -145,13 +145,13 @@
                 <div class="tips-box hide">
                     <div class="tips-arrow"></div>
                     <ul class="tips-inner">
-                        <li>菜单</li>
-                        <li>标签</li>
+                        <li>Menu</li>
+                        <li>Tags</li>
                         
-                        <li>友情链接</li>
+                        <li>Friends</li>
                         
                         
-                        <li>关于我</li>
+                        <li>About Me</li>
                         
                     </ul>
                 </div>
@@ -196,7 +196,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AS-AndroidStudio/">AS AndroidStudio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-ImageView-scaleType/">Android ImageView scaleType</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-View/">Android View</a></li></ul>
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AS-AndroidStudio/">AS AndroidStudio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-ImageView-scaleType/">Android ImageView scaleType</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-View/">Android View</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java-设计模式-android/">java 设计模式 android</a></li></ul>
                     </div>
                 </section>
                 
@@ -207,7 +207,7 @@
                     
                       <a class="main-nav-link switch-friends-link" href="http://lisxapp.com">lisx</a>
                     
-                      <a class="main-nav-link switch-friends-link" href="http://lishuxiong.github.io/">GitHub</a>
+                      <a class="main-nav-link switch-friends-link" href="https://github.com/lishuxiong">GitHub</a>
                     
                     </div>
                 </section>
@@ -273,7 +273,7 @@
             </nav>
         </header>                
     </div>
-    <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
+    <link class="menu-list" tags="Tags" friends="Friends" about="About Me">
 </nav>
       <div class="body-wrap"><article id="post-AndroidStudio及异常问题记录" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -320,32 +320,19 @@
 <p>具体参见链接地址：</p>
 <p><a href="http://www.jianshu.com/p/e1c0b46e317c" target="_blank" rel="external">http://www.jianshu.com/p/e1c0b46e317c</a></p>
 <p>3 加快android studio的运行速度：进入AS安装目录bin下面，找到studio64.exe.vmoptions文件，进入从上到下第二个开始一次修改为，1500m,500m，96m之后重新打开AS即可。</p>
-<p>4 在android studio中指定（替换）keystore签名文件首先在build下点击genereta singled APK,之后完善对应信息并且最后选择debug在finsh。（clean一下）之后在使用项目的build gradle文件中android{}下面配置如下片段例如：</p>
-<p>signingConfigs {</p>
-<pre><code>config {
-keyAlias &apos;123&apos;
-keyPassword &apos;123&apos;
-storeFile file(&apos;签名文件路径&apos;)
-storePassword &apos;123&apos;
-}
-</code></pre><p>}</p>
+<p>4 在android studio中指定（替换）keystore签名文件首先在build下点击genereta singled APK,之后完善对应信息并且最后选择debug在finsh。（clean一下）之后在使用项目的build gradle文件中android{}下面配置如下片段例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">signingConfigs &#123;</div><div class="line">    config &#123;</div><div class="line">    keyAlias &apos;123&apos;</div><div class="line">    keyPassword &apos;123&apos;</div><div class="line">    storeFile file(&apos;签名文件路径&apos;)</div><div class="line">    storePassword &apos;123&apos;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>最后clean一下项目，运行即可</p>
 <p>5 adnroid studio下ndk使用<br>  1 下载ndk<br>  2 配置ndk环境变量<br>  3 在cmd中进入到对应到libs库下面 的so库文件目录，之后执行ndk-buil重新编译。</p>
 <p>6 dexDebug ExecException finished with non-zero exit value 2 异常<br>  需要在gradle中配置下面的代码，原因是引用了多个libraries文件</p>
-<p>defaultConfig {</p>
-<pre><code>multiDexEnabled true
-</code></pre><p>}</p>
-<p>7 Execution failed for task ‘:app:transformClassesWithJarMergingForDebug’.</p>
-<blockquote>
-<p>com.android.build.api.transform.ransformException:java.util.zip.ZipException:duplicate entry:android/support/v4/app/BackStackState$1.class</p>
-</blockquote>
-<p> 原因：在所添加的jar包或aar包中也引用了support-V4,与工程中引用的相冲突<br>Ctrl+N –&gt; 在搜索框中输入BackStackState –&gt; 查找到所有引用该类的类，这些类即为引起冲突的类<br>去掉本工程中gradle中用于引用有冲突的包的代码或者将冲突的代码从jar包或aar包中移除，确保一个module中只引用了一份相同的第三方包 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">defaultConfig &#123;</div><div class="line">    multiDexEnabled true</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>7 Execution failed for task ‘:app:transformClassesWithJarMergingForDebug’.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">com.android.build.api.transform.ransformException:java.util.zip.ZipException:duplicate entry:android/support/v4/app/BackStackState$1.class</div></pre></td></tr></table></figure></p>
+<p>原因：在所添加的jar包或aar包中也引用了support-V4,与工程中引用的相冲突<br>Ctrl+N –&gt; 在搜索框中输入BackStackState –&gt; 查找到所有引用该类的类，这些类即为引起冲突的类<br>去掉本工程中gradle中用于引用有冲突的包的代码或者将冲突的代码从jar包或aar包中移除，确保一个module中只引用了一份相同的第三方包</p>
 <p>8 Could not find property” error. signingConfigs(配置打包签名的时候，提示找不到这个属性签名文件)</p>
 <p>解决：在gradle的文件中把signingConfigs的配置放在buildTypes类型的代码上面 （gradle 按照顺序执行）</p>
 <p>9 解决Android Studio编译后安装apk报错：The APK file does not exist on disk<br>  解决：打开当前的工程，在最右侧的gradle中重新build一下，在编译安装</p>
 <p>10 android wifi连接adb<br> cmd中执行 adb tcpip 5555<br> 之后执行 adb connect (手机wifi地址，wifi搞基设置中查看)：5555  </p>
 <p>11 android studio中clean或者build出现如下异常</p>
-<p><img src="http://opdge5lf7.bkt.clouddn.com/1.png" alt="image"> </p>
+<p><img src="http://opdge5lf7.bkt.clouddn.com/1.png" alt="image"></p>
 <p>出现原因：因为当前项目下对应的 .gradle中的编译缓存文件损坏，<br>导致每次编译读取缓存中的属性，最终每次出错。</p>
 <p>解决办法：进入当前项目下，找到.gradle文件，在当前gradle版本文件夹下面找到taskArtifacts文件夹<br>整个删除，重新clean生成，就ok。</p>
 <p>删除位置：<img src="http://opdge5lf7.bkt.clouddn.com/2.png" alt="image"></p>
@@ -355,17 +342,17 @@ storePassword &apos;123&apos;
   </div>
   
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2017/05/15/AndroidStudio及异常问题记录/">AndroidStudio及异常问题记录</a></p>
-        <p><span>文章作者:</span><a href="/" title="回到主页">lisx</a></p>
-        <p><span>发布时间:</span>2017-05-15, 17:16:58</p>
-        <p><span>最后更新:</span>2017-05-16, 09:56:58</p>
+        <p><span>Title:</span><a href="/2017/05/15/AndroidStudio及异常问题记录/">AndroidStudio及异常问题记录</a></p>
+        <p><span>Author:</span><a href="/" title="Back to Homepage">lisx</a></p>
+        <p><span>Created:</span>2017-05-15, 17:16:58</p>
+        <p><span>Updated:</span>2017-05-20, 15:15:38</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2017/05/15/AndroidStudio及异常问题记录/" title="AndroidStudio及异常问题记录">/2017/05/15/AndroidStudio及异常问题记录/</a>
-            <span class="copy-path" data-clipboard-text="原文: /2017/05/15/AndroidStudio及异常问题记录/　　作者: lisx" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>Full URL:</span><a class="post-url" href="/2017/05/15/AndroidStudio及异常问题记录/" title="AndroidStudio及异常问题记录">/2017/05/15/AndroidStudio及异常问题记录/</a>
+            <span class="copy-path" data-clipboard-text="From /2017/05/15/AndroidStudio及异常问题记录/　　By lisx" title="Copy Article&#39;s Link &amp; Author"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
-            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+            <span>License:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"CC BY-NC-SA 4.0"</a> Keep Link &amp; Author if Distribute.
         </p>
     </div>
 
@@ -390,7 +377,7 @@ storePassword &apos;123&apos;
   
 </article>
 <div id="toc" class="toc-article">
-        <strong class="toc-title">文章目录</strong>
+        <strong class="toc-title">Contents</strong>
         
             
         
@@ -406,10 +393,10 @@ storePassword &apos;123&apos;
         }
     </style>
 
-    <input type="button" id="tocButton" value="隐藏目录" title="点击按钮隐藏或者显示文章目录">
+    <input type="button" id="tocButton" value="Hide" title="Show or Hide Table of Contents">
 
     <script>
-        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+        yiliaConfig.toc = ["Hide", "Show", !!"false"];
     </script>
 
 
@@ -440,21 +427,21 @@ storePassword &apos;123&apos;
 
 <div class="scroll" id="post-nav-button">
         
-            <a href="/2017/05/16/ImageView的scaleType属性分析结果/" title="上一篇: ImageView的scaleType属性分析结果">
+            <a href="/2017/05/16/ImageView的scaleType属性分析结果/" title="Pre: ImageView的scaleType属性分析结果">
                 <i class="fa fa-angle-left"></i>
             </a>
         
 
-        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        <a title="Mini Archives"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2017/04/26/自定义CircleGroup/" title="下一篇: 自定义CircleGroup">
+            <a href="/2017/04/26/自定义CircleGroup/" title="Next: 自定义CircleGroup">
                 <i class="fa fa-angle-right"></i>
             </a>
         
     </div>
 
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/05/16/ImageView的scaleType属性分析结果/">ImageView的scaleType属性分析结果</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/15/AndroidStudio及异常问题记录/">AndroidStudio及异常问题记录</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/04/26/自定义CircleGroup/">自定义CircleGroup</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/05/20/java设计模式-单例模式/">java设计模式-单例模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/16/ImageView的scaleType属性分析结果/">ImageView的scaleType属性分析结果</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/15/AndroidStudio及异常问题记录/">AndroidStudio及异常问题记录</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/04/26/自定义CircleGroup/">自定义CircleGroup</a></li></ul>
 
 
     <script>
@@ -468,14 +455,14 @@ storePassword &apos;123&apos;
                 2016-2017 lisx
             </div>
             <div class="footer-right">
-                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+                <a href="http://hexo.io/" target="_blank" title="A fast, simple &amp; powerful blog framework">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="Another simple and elegant theme for Hexo  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
             </div>
         </div>
         
             <div class="visit">
                 
                     <span id="busuanzi_container_site_pv" style="display:none">
-                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        <span id="site-visit" title="Site Visitors"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
                         </span>
                     </span>
                 
@@ -484,7 +471,7 @@ storePassword &apos;123&apos;
                 
                 
                     <span id="busuanzi_container_page_pv" style="display:none">
-                        <span id="page-visit" title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        <span id="page-visit" title="Page Hits"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
                         </span>
                     </span>
                 
@@ -533,9 +520,9 @@ MathJax.Hub.Queue(function() {
 </script>
 
 <div class="scroll" id="scroll">
-    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
-    <a href="#comments" onclick="load$hide()" title="查看评论"><i class="fa fa-comments-o"></i></a>
-    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+    <a href="#" title="Back to Top"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide()" title="Comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="Go to Bottom"><i class="fa fa-arrow-down"></i></a>
 </div>
 <script>
     // Open in New Window

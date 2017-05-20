@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="lisx">
+
+
+
+<meta name="description" content="java设计模式之单例模式详解">
+<meta name="keywords" content="java 设计模式 android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java设计模式-单例模式">
+<meta property="og:url" content="/2017/05/20/java设计模式-单例模式/index.html">
+<meta property="og:site_name" content="lisx">
+<meta property="og:description" content="java设计模式之单例模式详解">
+<meta property="og:updated_time" content="2017-05-20T08:36:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java设计模式-单例模式">
+<meta name="twitter:description" content="java设计模式之单例模式详解">
+
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="lisx" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.jpg">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>java设计模式-单例模式 | lisx</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">lisx</a></h1>
+        </hgroup>
+
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false">
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class="no-result">No results found <i class="fa fa-spinner fa-pulse"></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>Menu</li>
+                        <li>Tags</li>
+                        
+                        <li>Friends</li>
+                        
+                        
+                        <li>About Me</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=PAkNDgsKBQ4MCnxNTRJfU1E" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" href="http://weibo.com/login.php" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" href="https://github.com/lishuxiong" title="GitHub"></a>
+                            
+                                <a class="fa 知乎" href="https://www.zhihu.com/" title="知乎"></a>
+                            
+                                <a class="fa 简书" href="http://www.jianshu.com/" title="简书"></a>
+                            
+                                <a class="fa Facebook" href="https://www.facebook.com/" title="Facebook"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AS-AndroidStudio/">AS AndroidStudio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-ImageView-scaleType/">Android ImageView scaleType</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-View/">Android View</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java-设计模式-android/">java 设计模式 android</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://lisxapp.com">lisx</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://github.com/lishuxiong">GitHub</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">Make progress every day and Never give up......</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">lisx</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">lisx</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=PAkNDgsKBQ4MCnxNTRJfU1E" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" target="_blank" href="http://weibo.com/login.php" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/lishuxiong" title="GitHub"></a>
+                            
+                                <a class="fa 知乎" target="_blank" href="https://www.zhihu.com/" title="知乎"></a>
+                            
+                                <a class="fa 简书" target="_blank" href="http://www.jianshu.com/" title="简书"></a>
+                            
+                                <a class="fa Facebook" target="_blank" href="https://www.facebook.com/" title="Facebook"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="Tags" friends="Friends" about="About Me">
+</nav>
+      <div class="body-wrap"><article id="post-java设计模式-单例模式" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/05/20/java设计模式-单例模式/" class="article-date">
+      <time datetime="2017-05-20T06:02:18.000Z" itemprop="datePublished">2017-05-20</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy">
+    
+    
+      <header class="article-header">
+        <h1 class="article-title" itemprop="name">
+      java设计模式-单例模式
+    </h1>
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+        <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java-设计模式-android/">java 设计模式 android</a></li></ul>
+    </div>
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>java设计模式之单例模式详解<br><a id="more"></a></p>
+<h1 id="设计模式是什么？"><a href="#设计模式是什么？" class="headerlink" title="设计模式是什么？"></a>设计模式是什么？</h1><p>所谓的设计模式：是一套被反复使用、多数人知晓的、经过分类的、代码设计经验的总结。（ps：觉得应该是应对产品需求所总结出来的套路）</p>
+<h1 id="设计模式做什么用的？"><a href="#设计模式做什么用的？" class="headerlink" title="设计模式做什么用的？"></a>设计模式做什么用的？</h1><p>让你的代码可重用性强点、让代码看起来容易被理解点、让代码的可靠性高点（不至于修改一处，引发很多其他问题），让代码的更加结构化点…</p>
+<p>由于本人主做java，故主要用java来说明自己对设计模式的一些理解，万丈高楼起于平地，就先从最简单的单例模式开始记录吧。</p>
+<p>java的单例模式是一种常见模式，大体归结为2大类：懒汉式单例、饿汉式单例（比如：登记式单例，枚举式单例…等等，我觉得只是实现的方式不同）；</p>
+<p>单例模式的特点：<br>1 一个类的的实例只能有一个。（本质就是在内存中有且只有一个引用地址）<br>2 单例类必须自己创建自己的实例。（不能有其他的创建方式，保证唯一性）<br>3 单例类必须管理自己的这个实例，提供给外部唯一访问实例的函数（保证实例使用时的唯一性）；</p>
+<h1 id="一-懒汉式单例"><a href="#一-懒汉式单例" class="headerlink" title="一 懒汉式单例"></a>一 懒汉式单例</h1><p>只有在自身需要的时候才会创建，没有提前创建好存在内存中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">//懒汉式单例类</div><div class="line">public class Singleton &#123;  </div><div class="line">  private Singleton() &#123;&#125;  //构造方法私有化，保证创建方法唯一</div><div class="line">  private static Singleton single=null;  </div><div class="line">  //提供对外的唯一访问方法</div><div class="line">  public static Singleton getInstance() &#123;  </div><div class="line">    if (single == null) &#123;    </div><div class="line">        single = new Singleton();  </div><div class="line">    &#125;    </div><div class="line">        return single;  </div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们都知道java代码会被编译程class字节码文件，然后在JVM中执行，那么在当前的JVM中，这个类的内存引用地址就应该是唯一的，Singleton类在初次调用是实例化自己，通过构造方法的private私有化，保证不能被外部创建，同时提供getInstance()方法，唯一访问方式（途径），管理好自己的实例。</p>
+<font color="#FF0000" size="3">注：因为java存在反射的机制，它是能够实例化构造方法为private的类，我们也可以修改构造器，让它在创建第二个实例的时候抛异常。</font>
+
+<p>以上简单的例子，在java的编程中并不完善，因为我们还要考虑到多线程的情况，如果多条线程中同时使用Singleton类的实例，通过getInstance()方法，如果当前类还没有被实例化那么就会new Singleton（），创建引用地址并且分配内存，如果没有同步，就容易出现问题：例如（当Singleton还是null的时候 A线程调用getInstance()，程序会去new Singleton(),假使此刻Singleton的对象还在创建中，B线程又调用了getInstance（），那么就又会去创建，此时就有可能内存中有2个Singleton对象。） 因此我们还可以这样改造一下这个getInstance（）方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public static synchronized Singleton getInstance() &#123;  </div><div class="line">         if (single == null) &#123;    </div><div class="line">             single = new Singleton();  </div><div class="line">         &#125;    </div><div class="line">        return single;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们试着给这个方法加上synchronized ，使它变成同步方法，或者：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public static Singleton getInstance() &#123;  </div><div class="line">        if (singleton == null) &#123;    </div><div class="line">            synchronized (Singleton.class) &#123;    </div><div class="line">               if (singleton == null) &#123;    </div><div class="line">                  singleton = new Singleton();   </div><div class="line">               &#125;    </div><div class="line">            &#125;    </div><div class="line">        &#125;    </div><div class="line">        return singleton;   </div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>我们用当前对象作为同步锁，2次非null判断，同时lock object也是可以的，这样就可以避免上述所说的情况。</p>
+<h1 id="二-饿汉式单例"><a href="#二-饿汉式单例" class="headerlink" title="二 饿汉式单例"></a>二 饿汉式单例</h1><p>当使用这个类的时候 本身作为静态成员变量立马被创建的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">//饿汉式单例类.在类初始化时，已经自行实例化   </div><div class="line">public class Singleton1 &#123;  </div><div class="line">    private Singleton1() &#123;&#125;  </div><div class="line">    private static final Singleton1 single = new Singleton1();  </div><div class="line">    //静态工厂方法   </div><div class="line">    public static Singleton1 getInstance() &#123;  </div><div class="line">        return single;  </div><div class="line">    &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>饿汉式单例在类创建的同时本身作为静态的成员变量就已经被创建好，所以我们通过getInstance()获取使用时永远都是，所以天生是线程安全的single这个静态实例。因此这种写法也是线程安全的。</p>
+<p>以上是单例模式的简单形式，在实际应用中，往往有时候还是会出现各种坑的，所以我们还可以继续完善一下。</p>
+<h1 id="三-单例的不同实现形式和优化"><a href="#三-单例的不同实现形式和优化" class="headerlink" title="三 单例的不同实现形式和优化"></a>三 单例的不同实现形式和优化</h1><p>1 兼顾线程安全和效率的写法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public class Singleton &#123;</div><div class="line">   private static volatile Singleton singleton = null;  </div><div class="line">   private Singleton()&#123;&#125;  </div><div class="line">   public static Singleton getSingleton()&#123;</div><div class="line">       if(singleton == null)&#123;</div><div class="line">           synchronized (Singleton.class)&#123;</div><div class="line">               if(singleton == null)&#123;</div><div class="line">                   singleton = new Singleton();</div><div class="line">               &#125;</div><div class="line">           &#125;</div><div class="line">       &#125;</div><div class="line">       return singleton;</div><div class="line">   &#125;    </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这种写法被称为“双重检查锁”，就是在getSingleton()方法中，进行两次null检查。看似多此一举，但实际上却极大提升了并发度，进而提升了性能。为什么可以提高并发度呢？就像上面说的，在单例中new的情况非常少，绝大多数都是可以并行的读操作。因此在加锁前多进行一次null检查就可以减少绝大多数的加锁操作，执行效率提高的目的也就达到了。</p>
+<font color="#FF0000" size="3">注： volatile 关键字修饰 JDK1.5之前对这个支持不是很好。</font>
+
+<p>2 静态内部类法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">public class Singleton &#123;</div><div class="line">    private static class Holder &#123;</div><div class="line">        private static Singleton singleton = new Singleton();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    private Singleton()&#123;&#125;</div><div class="line"></div><div class="line">    public static Singleton getSingleton()&#123;</div><div class="line">        return Holder.singleton;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>把Singleton实例放到一个静态内部类中，这样避免了静态实例在Singleton类加载的时候就创建对象，并且由于静态内部类只会被加载一次，所以这种写法也是线程安全的.</p>
+<p>3 枚举写法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">public enum Singleton &#123;</div><div class="line">    INSTANCE;</div><div class="line">    private String name;</div><div class="line">    public String getName()&#123;</div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line">    public void setName(String name)&#123;</div><div class="line">        this.name = name;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>使用枚举除了线程安全和防止反射强行调用构造器之外，还提供了自动序列化机制，防止反序列化的时候创建新的对象。个人一般在java中很少写枚举，占用资源多尤其在android的开发中不建议使用。</p>
+<p>4 登记式单例</p>
+<p>原理： 登记式单例实际上维护了一组单例类的实例，将这些实例存放在一个Map（登记薄）中，对于已经登记过的实例，则从Map直接返回，对于没有登记的，则先登记，然后返回。</p>
+<p>这个可以忽略，我想也几乎没人去这样写的吧。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><h2 id="1-饿汉式和懒汉式区别："><a href="#1-饿汉式和懒汉式区别：" class="headerlink" title="1 饿汉式和懒汉式区别："></a>1 饿汉式和懒汉式区别：</h2><p>懒汉模式在运行的时候 获取对象比较慢，但是加载类的时候比较快。<br>饿汉模式是在运行的时候获取对象较快，加载类的时候慢。</p>
+<h2 id="2-线程安全："><a href="#2-线程安全：" class="headerlink" title="2 线程安全："></a>2 线程安全：</h2><p>懒汉模式一是般非线程安全的，所以在写的同时注意同步。<br>饿汉式一般就是线程安全的。</p>
+<h2 id="3-序列化与反序列化安全："><a href="#3-序列化与反序列化安全：" class="headerlink" title="3 序列化与反序列化安全："></a>3 序列化与反序列化安全：</h2><p> 对象在序列化后，如果反序列化又可能会创建新的对象，枚举单例写法提供反序列化机制可以避免此类问题。</p>
+      
+    </div>
+    
+  </div>
+  
+    <div class="copyright">
+        <p><span>Title:</span><a href="/2017/05/20/java设计模式-单例模式/">java设计模式-单例模式</a></p>
+        <p><span>Author:</span><a href="/" title="Back to Homepage">lisx</a></p>
+        <p><span>Created:</span>2017-05-20, 14:02:18</p>
+        <p><span>Updated:</span>2017-05-20, 16:36:16</p>
+        <p>
+            <span>Full URL:</span><a class="post-url" href="/2017/05/20/java设计模式-单例模式/" title="java设计模式-单例模式">/2017/05/20/java设计模式-单例模式/</a>
+            <span class="copy-path" data-clipboard-text="From /2017/05/20/java设计模式-单例模式/　　By lisx" title="Copy Article&#39;s Link &amp; Author"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>License:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"CC BY-NC-SA 4.0"</a> Keep Link &amp; Author if Distribute.
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2017/05/16/ImageView的scaleType属性分析结果/">
+                    ImageView的scaleType属性分析结果
+                </a>
+            </div>
+        
+    </nav>
+  
+</article>
+<div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#设计模式是什么？"><span class="toc-number">1.</span> <span class="toc-text">设计模式是什么？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#设计模式做什么用的？"><span class="toc-number">2.</span> <span class="toc-text">设计模式做什么用的？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#一-懒汉式单例"><span class="toc-number">3.</span> <span class="toc-text">一 懒汉式单例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二-饿汉式单例"><span class="toc-number">4.</span> <span class="toc-text">二 饿汉式单例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#三-单例的不同实现形式和优化"><span class="toc-number">5.</span> <span class="toc-text">三 单例的不同实现形式和优化</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-饿汉式和懒汉式区别："><span class="toc-number">6.1.</span> <span class="toc-text">1 饿汉式和懒汉式区别：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-线程安全："><span class="toc-number">6.2.</span> <span class="toc-text">2 线程安全：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-序列化与反序列化安全："><span class="toc-number">6.3.</span> <span class="toc-text">3 序列化与反序列化安全：</span></a></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="Hide" title="Show or Hide Table of Contents">
+
+    <script>
+        yiliaConfig.toc = ["Hide", "Show", !!"false"];
+    </script>
+
+
+    <div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"java设计模式-单例模式　| lisx　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+    
+
+
+<div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="Back to Homepage"><i class="fa fa-home"></i></a>
+        
+
+        <a title="Mini Archives"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2017/05/16/ImageView的scaleType属性分析结果/" title="Next: ImageView的scaleType属性分析结果">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/05/20/java设计模式-单例模式/">java设计模式-单例模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/16/ImageView的scaleType属性分析结果/">ImageView的scaleType属性分析结果</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/15/AndroidStudio及异常问题记录/">AndroidStudio及异常问题记录</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/04/26/自定义CircleGroup/">自定义CircleGroup</a></li></ul>
+
+
+    <script>
+        
+    </script></div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2016-2017 lisx
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="A fast, simple &amp; powerful blog framework">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="Another simple and elegant theme for Hexo  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style="display:none">
+                        <span id="site-visit" title="Site Visitors"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style="display:none">
+                        <span id="page-visit" title="Page Hits"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    <script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+<script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<div class="scroll" id="scroll">
+    <a href="#" title="Back to Top"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide()" title="Comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="Go to Bottom"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        $("a[target=_blank]").removeAttr("target");
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
