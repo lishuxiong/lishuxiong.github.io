@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="lisx">
+
+
+
+<meta name="description" content="java设计模式之工厂模式详解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java设计模式-工厂模式">
+<meta property="og:url" content="/2017/05/27/java设计模式-工厂模式/index.html">
+<meta property="og:site_name" content="lisx">
+<meta property="og:description" content="java设计模式之工厂模式详解">
+<meta property="og:updated_time" content="2017-06-17T09:31:47.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java设计模式-工厂模式">
+<meta name="twitter:description" content="java设计模式之工厂模式详解">
+
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="lisx" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.jpg">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>java设计模式-工厂模式 | lisx</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">lisx</a></h1>
+        </hgroup>
+
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false">
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class="no-result">No results found <i class="fa fa-spinner fa-pulse"></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=PAkNDgsKBQ4MCnxNTRJfU1E" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" href="http://weibo.com/login.php" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" href="https://github.com/lishuxiong" title="GitHub"></a>
+                            
+                                <a class="fa 知乎" href="https://www.zhihu.com/" title="知乎"></a>
+                            
+                                <a class="fa 简书" href="http://www.jianshu.com/" title="简书"></a>
+                            
+                                <a class="fa Facebook" href="https://www.facebook.com/" title="Facebook"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AS-AndroidStudio/">AS AndroidStudio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-ImageView-scaleType/">Android ImageView scaleType</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-View/">Android View</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java-设计模式-android/">java 设计模式 android</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://lisxapp.com">lisx</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://github.com/lishuxiong">GitHub</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">Make progress every day and Never give up......</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">lisx</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">lisx</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=PAkNDgsKBQ4MCnxNTRJfU1E" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" target="_blank" href="http://weibo.com/login.php" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/lishuxiong" title="GitHub"></a>
+                            
+                                <a class="fa 知乎" target="_blank" href="https://www.zhihu.com/" title="知乎"></a>
+                            
+                                <a class="fa 简书" target="_blank" href="http://www.jianshu.com/" title="简书"></a>
+                            
+                                <a class="fa Facebook" target="_blank" href="https://www.facebook.com/" title="Facebook"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
+</nav>
+      <div class="body-wrap"><article id="post-java设计模式-工厂模式" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/05/27/java设计模式-工厂模式/" class="article-date">
+      <time datetime="2017-05-27T13:06:48.000Z" itemprop="datePublished">2017-05-27</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy">
+    
+    
+      <header class="article-header">
+        <h1 class="article-title" itemprop="name">
+      java设计模式-工厂模式
+    </h1>
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>java设计模式之工厂模式详解<br><a id="more"></a></p>
+<p>工厂，是一类用以生产货物的大型工业建筑物，现代对工厂也称为“制造厂”、“生产企业”。这是广义的定义，那么具体到我们的编程世界中，工厂也可以被我们抽象成<br>以生产我们需要的功能，代码块，方法，变量等等，那么在面向对象中的编程中，我们使用的最多的一般就是针对对象的“生产”。<br>我们都知道一个对象的生成，需要一个复杂的过程，比如构造方法中一些初始化的赋值，方法的使用等等。有时候我们只关注这个对象本身的而不必要在乎它创建的过程，我们是否可以分装一个类似工厂的生产单元来解决此类问题呢，由此工厂模式的（套路）被大神们总结出来，这里记录一下个人对工厂模式的使用以及理解：</p>
+<h1 id="工厂模式的作用"><a href="#工厂模式的作用" class="headerlink" title="工厂模式的作用"></a>工厂模式的作用</h1><p>工厂模式主要是为创建对象提供过渡接口，以便将创建对象的具体过程屏蔽隔离起来，达到提高灵活性的目的。</p>
+<h1 id="工厂模式的分类"><a href="#工厂模式的分类" class="headerlink" title="工厂模式的分类"></a>工厂模式的分类</h1><p>1）简单工厂模式（Simple Factory）<br>2）工厂方法模式（Factory Method）<br>3）抽象工厂模式（Abstract Factory）<br>GOF在《设计模式》一书中将工厂模式分为两类：工厂方法模式（Factory Method）与抽象工厂模式（Abstract Factory）<br>简单工厂模式（Simple Factory）归属与工厂方法模式（Factory Method），属于同一类。</p>
+<h1 id="工厂模式的一般组成"><a href="#工厂模式的一般组成" class="headerlink" title="工厂模式的一般组成"></a>工厂模式的一般组成</h1><p>1 工厂类角色：这是本模式的核心，含有一定的业务逻辑。在java中它往往由一个具体类实现。</p>
+<p>2 抽象产品角色：它一般是具体产品继承的父类或者实现的接口。在java中由接口或者抽象类来实现。</p>
+<p>3 具体产品角色：工厂类所创建的对象就是此角色的实例。在java中由一个具体类实现。</p>
+<h1 id="工厂模式的特点和区别"><a href="#工厂模式的特点和区别" class="headerlink" title="工厂模式的特点和区别"></a>工厂模式的特点和区别</h1><h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><p>工厂方法模式：<br>一个抽象类，可以派生出多个具体的实现类。 （例如：一个服饰厂，可以生产出很多衣服）<br>一个抽象工厂类，可以派生出多个具体工厂类。 （例如：一个服饰厂，可以派生出衣服厂，鞋子厂，帽子厂等等）<br>每个具体工厂类只能创建一个具体产品类的实例。（例如：一个服饰厂中的衣服厂，它只能生产出衣服，而不能生产出鞋子）</p>
+<p>抽象工厂模式：<br>多个抽象产品类，每个抽象产品类可以派生出多个具体产品类。（例如：衣服厂，鞋子厂，帽子厂（可以看作多个抽象产品类），可以生产出衣服，鞋子，帽子）<br>一个抽象工厂类，可以派生出多个具体工厂类。 （例如：一个服饰厂（抽象工厂类）可以有衣服厂，鞋子厂，帽子厂）<br>每个具体工厂类可以创建多个具体产品类的实例。（例如：衣服厂可以生产衣服）</p>
+<h2 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h2><p>工厂方法模式只有一个抽象产品类，而抽象工厂模式有多个。<br>工厂方法模式的具体工厂类只能创建一个具体产品类的实例，而抽象工厂模式可以创建多个</p>
+<h1 id="工厂模式的3中具体写法和理解"><a href="#工厂模式的3中具体写法和理解" class="headerlink" title="工厂模式的3中具体写法和理解"></a>工厂模式的3中具体写法和理解</h1><h2 id="简单工厂模式"><a href="#简单工厂模式" class="headerlink" title="简单工厂模式"></a>简单工厂模式</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">//产品接口</div><div class="line">public interface Product &#123;</div><div class="line">  public void productName();</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">//产品实现类ProductA</div><div class="line">public class ProductA implements Product &#123;</div><div class="line">  @Override</div><div class="line">  public void productName() &#123;</div><div class="line">      System.out.println(&quot;product A&quot;);</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">//产品实现类ProductB</div><div class="line">public class ProductB implements Product &#123;</div><div class="line">  @Override</div><div class="line">  public void productName() &#123;</div><div class="line">      System.out.println(&quot;product B&quot;);</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">//工厂类-简单工厂模式</div><div class="line">public class Factory &#123;</div><div class="line">  public ProductI create(String productName) &#123;</div><div class="line">      switch (productName) &#123;</div><div class="line">          case &quot;A&quot;:</div><div class="line">              return new ProductA();</div><div class="line">          case &quot;B&quot;:</div><div class="line">              return new ProductB();</div><div class="line">          default:</div><div class="line">              return null;</div><div class="line">      &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">//测试类</div><div class="line">public class Client &#123;</div><div class="line">  public static void main(String[] args) &#123;</div><div class="line">      Factory factory = new Factory();</div><div class="line">      ProductI productA = factory.create(&quot;A&quot;);</div><div class="line">      productA.productName();</div><div class="line">      ProductI productB = factory.create(&quot;B&quot;);</div><div class="line">      productB.productName();</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">输出</div><div class="line">product A</div><div class="line">product B</div></pre></td></tr></table></figure>
+<p>首先定义一个接口，其中有一个product（）方法提供生产你想要的对象，接着是两个实现类ProductA，和ProductB具体实现类，最后一个Factory类，生产出需要的对象，不过其中有业务判断逻辑，剩下的就是最后的使用，，获取工厂对象，创建需要的对象，简单工厂的核心就是一个Factory类，我们每次想要增加一种新类型对象的时候，都必须修改Factory的源代码。当我们需要很多中不同类型对象的时候，而且对象之间存在复杂的层次关系的时候，这个Factory类必须拥有复杂的逻辑判断能力，其代码量也将不断地激增，这对以后的维护简直就是恐怖两个字…由此引出工厂方法模式</p>
+<h2 id="工厂方法模式"><a href="#工厂方法模式" class="headerlink" title="工厂方法模式"></a>工厂方法模式</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">工厂接口</div><div class="line">public interface Factory &#123;</div><div class="line">  // 工厂的目的是为了生产产品</div><div class="line">  public Product create();</div><div class="line">&#125;</div><div class="line"></div><div class="line">工厂实体类 （ProductA ,ProductB,是上面实现了Product接口）</div><div class="line">public class FactoryA implements Factory &#123;</div><div class="line">  @Override</div><div class="line">  public Product create() &#123;</div><div class="line">      return new ProductA();</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class FactoryB implements Factory &#123;</div><div class="line">  @Override</div><div class="line">  public Product create() &#123;</div><div class="line">      return new ProductB();</div><div class="line">  &#125;</div><div class="line"></div><div class="line"></div><div class="line">  //测试类 工厂方法模式</div><div class="line">public class Client &#123;</div><div class="line">  public static void main(String[] args) &#123;</div><div class="line">      Factory factoryA = new FactoryA();</div><div class="line">      Product productA = factoryA.create();</div><div class="line">      productA.productName();</div><div class="line">      Factory factoryB = new FactoryB();</div><div class="line">      Product productB = factoryB.create();</div><div class="line">      productB.productName();</div><div class="line">    &#125;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>工厂方法是针 对每一种产品提供一个工厂类 。通过不同的工厂实例来创建不同的产品实例，在同一等级结构中， 支持增加任意产品。</p>
+<h2 id="抽象工厂类"><a href="#抽象工厂类" class="headerlink" title="抽象工厂类"></a>抽象工厂类</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line">//产品接口</div><div class="line">public interface ProductAI &#123;</div><div class="line">  public void productName();</div><div class="line">&#125;</div><div class="line"></div><div class="line">//产品接口</div><div class="line">public interface ProductBI &#123;</div><div class="line">  public void productName();</div><div class="line">&#125;</div><div class="line"></div><div class="line">产品实体类</div><div class="line">public class ProductA1 implements ProductAI &#123;</div><div class="line">  @Override</div><div class="line">  public void productName() &#123;</div><div class="line">      System.out.println(&quot;product A1&quot;);</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">产品实体类</div><div class="line">public class ProductB1 implements ProductAI &#123;</div><div class="line">  @Override</div><div class="line">  public void productName() &#123;</div><div class="line">      System.out.println(&quot;product B1&quot;);</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">// 抽像工厂模式</div><div class="line">public interface AbstractFactory &#123;</div><div class="line">  public ProductAI createProductA();</div><div class="line">  public ProductBI createProductB();</div><div class="line">&#125;</div><div class="line"></div><div class="line">工厂实体类</div><div class="line">public class Factory1 implements AbstractFactory &#123;</div><div class="line">  @Override</div><div class="line">  public ProductAI createProductA() &#123;</div><div class="line">      return new ProductA1();</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  @Override</div><div class="line">  public ProductBI createProductB() &#123;</div><div class="line">      return new ProductB1();</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">public class Factory2 implements AbstractFactory &#123;</div><div class="line">  @Override</div><div class="line">  public ProductAI createProductA() &#123;</div><div class="line">      return new ProductA2();</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  @Override</div><div class="line">  public ProductBI createProductB() &#123;</div><div class="line">      return new ProductB2();</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>抽象工厂是应对产品系列概念的,应对产品系列概念而生，增加新的产品线很容易，但是无法增加新的产品。<br>和工厂方法的区别是，抽象工厂往往有多种方法，可以生产多种产品，即一系列产品。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>核心：需要什么对象，不关注过程，只需要结果。</p>
+      
+    </div>
+    
+  </div>
+  
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2017/05/27/java设计模式-工厂模式/">java设计模式-工厂模式</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">lisx</a></p>
+        <p><span>发布时间:</span>2017-05-27, 21:06:48</p>
+        <p><span>最后更新:</span>2017-06-17, 17:31:47</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2017/05/27/java设计模式-工厂模式/" title="java设计模式-工厂模式">/2017/05/27/java设计模式-工厂模式/</a>
+            <span class="copy-path" data-clipboard-text="原文: /2017/05/27/java设计模式-工厂模式/　　作者: lisx" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2017/05/20/java设计模式-单例模式/">
+                    java设计模式-单例模式
+                </a>
+            </div>
+        
+    </nav>
+  
+</article>
+<div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#工厂模式的作用"><span class="toc-number">1.</span> <span class="toc-text">工厂模式的作用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#工厂模式的分类"><span class="toc-number">2.</span> <span class="toc-text">工厂模式的分类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#工厂模式的一般组成"><span class="toc-number">3.</span> <span class="toc-text">工厂模式的一般组成</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#工厂模式的特点和区别"><span class="toc-number">4.</span> <span class="toc-text">工厂模式的特点和区别</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#特点"><span class="toc-number">4.1.</span> <span class="toc-text">特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#区别"><span class="toc-number">4.2.</span> <span class="toc-text">区别</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#工厂模式的3中具体写法和理解"><span class="toc-number">5.</span> <span class="toc-text">工厂模式的3中具体写法和理解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#简单工厂模式"><span class="toc-number">5.1.</span> <span class="toc-text">简单工厂模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工厂方法模式"><span class="toc-number">5.2.</span> <span class="toc-text">工厂方法模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#抽象工厂类"><span class="toc-number">5.3.</span> <span class="toc-text">抽象工厂类</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录" title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+    <div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"java设计模式-工厂模式　| lisx　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+    
+
+
+<div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2017/05/20/java设计模式-单例模式/" title="下一篇: java设计模式-单例模式">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/05/27/java设计模式-工厂模式/">java设计模式-工厂模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/20/java设计模式-单例模式/">java设计模式-单例模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/16/ImageView的scaleType属性分析结果/">ImageView的scaleType属性分析结果</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/15/AndroidStudio及异常问题记录/">AndroidStudio及异常问题记录</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/04/26/自定义CircleGroup/">自定义CircleGroup</a></li></ul>
+
+
+    <script>
+        
+    </script></div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2016-2017 lisx
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style="display:none">
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style="display:none">
+                        <span id="page-visit" title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    <script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+<script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide()" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        $("a[target=_blank]").removeAttr("target");
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
