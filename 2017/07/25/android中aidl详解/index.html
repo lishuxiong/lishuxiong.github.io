@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="lisx">
+
+
+
+<meta name="description" content="aidl详解，使用">
+<meta name="keywords" content="Android aidl 跨进程通讯">
+<meta property="og:type" content="article">
+<meta property="og:title" content="android中AIDL详解">
+<meta property="og:url" content="/2017/07/25/android中aidl详解/index.html">
+<meta property="og:site_name" content="lisx">
+<meta property="og:description" content="aidl详解，使用">
+<meta property="og:image" content="http://opdge5lf7.bkt.clouddn.com/aidl_1.png">
+<meta property="og:image" content="http://opdge5lf7.bkt.clouddn.com/aidl_2.png">
+<meta property="og:image" content="http://opdge5lf7.bkt.clouddn.com/aidl_3.png">
+<meta property="og:image" content="http://opdge5lf7.bkt.clouddn.com/aidl_4.png">
+<meta property="og:image" content="http://opdge5lf7.bkt.clouddn.com/aidl_56.png">
+<meta property="og:image" content="http://opdge5lf7.bkt.clouddn.com/aidl_7.png">
+<meta property="og:image" content="http://opdge5lf7.bkt.clouddn.com/aidl_8.png">
+<meta property="og:updated_time" content="2017-07-26T12:53:44.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="android中AIDL详解">
+<meta name="twitter:description" content="aidl详解，使用">
+<meta name="twitter:image" content="http://opdge5lf7.bkt.clouddn.com/aidl_1.png">
+
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="lisx" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.jpg">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>android中AIDL详解 | lisx</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: true
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">lisx</a></h1>
+        </hgroup>
+
+        
+
+        
+            <form id="search-form">
+            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false">
+            <i class="fa fa-times" onclick="resetSearch()"></i>
+            </form>
+            <div id="local-search-result"></div>
+            <p class="no-result">No results found <i class="fa fa-spinner fa-pulse"></i></p>
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=PAkNDgsKBQ4MCnxNTRJfU1E" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" href="http://weibo.com/login.php" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" href="https://github.com/lishuxiong" title="GitHub"></a>
+                            
+                                <a class="fa 知乎" href="https://www.zhihu.com/" title="知乎"></a>
+                            
+                                <a class="fa 简书" href="http://www.jianshu.com/" title="简书"></a>
+                            
+                                <a class="fa Facebook" href="https://www.facebook.com/" title="Facebook"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AS-AndroidStudio/">AS AndroidStudio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-ImageView-scaleType/">Android ImageView scaleType</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-View/">Android View</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-aidl-跨进程通讯/">Android aidl 跨进程通讯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java-设计模式-android/">java 设计模式 android</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://lisxapp.com">lisx</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://github.com/lishuxiong">GitHub</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">Make progress every day and Never give up......</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">lisx</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">lisx</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=PAkNDgsKBQ4MCnxNTRJfU1E" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" target="_blank" href="http://weibo.com/login.php" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/lishuxiong" title="GitHub"></a>
+                            
+                                <a class="fa 知乎" target="_blank" href="https://www.zhihu.com/" title="知乎"></a>
+                            
+                                <a class="fa 简书" target="_blank" href="http://www.jianshu.com/" title="简书"></a>
+                            
+                                <a class="fa Facebook" target="_blank" href="https://www.facebook.com/" title="Facebook"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
+</nav>
+      <div class="body-wrap"><article id="w-android中aidl详解" class="article article-type-w" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2017/07/25/android中aidl详解/" class="article-date">
+      <time datetime="2017-07-25T06:01:08.000Z" itemprop="datePublished">2017-07-25</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy">
+    
+    
+      <header class="article-header">
+        <h1 class="article-title" itemprop="name">
+      android中AIDL详解
+    </h1>
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+        <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android-aidl-跨进程通讯/">Android aidl 跨进程通讯</a></li></ul>
+    </div>
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>aidl详解，使用<br><a id="more"></a></p>
+<h1 id="跨进程通讯"><a href="#跨进程通讯" class="headerlink" title="跨进程通讯"></a>跨进程通讯</h1><p>我们都知道在android开发中，每一个进程都有自己的Dalvik VM实例，对应的所有操作都是在自己内部进行，如果进程A要访问进程B的数据，<br>就要通过特殊的渠道或者规则去访问，也就是进程间的通讯，android中也提供了多种访问访问方式，<br>例如Activity ContentProvider Broadcast Service，这里只描述service对应的aidl。</p>
+<h1 id="AIDL"><a href="#AIDL" class="headerlink" title="AIDL"></a>AIDL</h1><p>AIDL是一个缩写，全称是Android Interface Definition Language，是android接口定义语言。(相关知识点service，Binder,Messenger,序列化,这里不多做介绍)</p>
+<p>文件类型：aidl文件的后缀是 .aidl</p>
+<p>支持数据类型：byte，short，int，long，float，double，boolean，char，String,CharSequence,<br>List类型：List中的所有元素必须是AIDL支持的类型之一，或者是一个其他AIDL生成的接口，或者是定义的parcelable,List可以使用泛型。<br>Map类型：Map中的所有元素必须是AIDL支持的类型之一，或者是一个其他AIDL生成的接口，或者是定义的parcelable。Map是不支持泛型的.</p>
+<p>定向tag：AIDL中的定向 tag 表示了在跨进程通信中数据的流向，其中 in 表示数据只能由客户端流向服务端， out 表示数据只能由服务端流向客户端，<br>而 inout 则表示数据可在服务端与客户端之间双向流通。</p>
+<h1 id="aidl的创建"><a href="#aidl的创建" class="headerlink" title="aidl的创建"></a>aidl的创建</h1><h2 id="首先定义aidl接口文件"><a href="#首先定义aidl接口文件" class="headerlink" title="首先定义aidl接口文件"></a>首先定义aidl接口文件</h2><p><img src="http://opdge5lf7.bkt.clouddn.com/aidl_1.png" alt="image"></p>
+<h2 id="定义业务接口，和自定义数据类型aidl文件"><a href="#定义业务接口，和自定义数据类型aidl文件" class="headerlink" title="定义业务接口，和自定义数据类型aidl文件"></a>定义业务接口，和自定义数据类型aidl文件</h2><p><img src="http://opdge5lf7.bkt.clouddn.com/aidl_2.png" alt="image"></p>
+<font color="#FF0000" size="3" face="重点，重点，重点">重点，重点，重点，注意import包名，当前引用的类的全路径一定要正确</font>
+
+
+
+<h2 id="定义实际的数据结构，注意包名和结构一定和aidl中的一致。"><a href="#定义实际的数据结构，注意包名和结构一定和aidl中的一致。" class="headerlink" title="定义实际的数据结构，注意包名和结构一定和aidl中的一致。"></a>定义实际的数据结构，注意包名和结构一定和aidl中的一致。</h2><p><img src="http://opdge5lf7.bkt.clouddn.com/aidl_3.png" alt="image"></p>
+<font color="#FF0000" size="3" face="重点，重点，重点">注意包名和结构一定和aidl中的一致</font>
+
+
+
+<h2 id="客户端对应aidl文件和服务端一样。可以参照对比"><a href="#客户端对应aidl文件和服务端一样。可以参照对比" class="headerlink" title="客户端对应aidl文件和服务端一样。可以参照对比"></a>客户端对应aidl文件和服务端一样。可以参照对比</h2><p>服务端项目结构图：<br><img src="http://opdge5lf7.bkt.clouddn.com/aidl_4.png" alt="image"></p>
+<p>客户端项目结构图：<br><img src="http://opdge5lf7.bkt.clouddn.com/aidl_56.png" alt="image"></p>
+<h1 id="aidl服务端实现"><a href="#aidl服务端实现" class="headerlink" title="aidl服务端实现"></a>aidl服务端实现</h1><h2 id="AbstractAccount类"><a href="#AbstractAccount类" class="headerlink" title="AbstractAccount类"></a>AbstractAccount类</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">abstract class AbstractAccount &#123;</div><div class="line"></div><div class="line">    private Transport mTransport = new Transport();</div><div class="line"></div><div class="line">    private class Transport extends IAccountAPI.Stub &#123;</div><div class="line">        @Override</div><div class="line">        public String getName() throws RemoteException &#123;</div><div class="line">            return getNameInfo();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        @Override</div><div class="line">        public void getAccount(Request request, IAccountCallback cb) throws RemoteException &#123;</div><div class="line">            getAccountInfo(request,cb);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public abstract String getNameInfo();</div><div class="line"></div><div class="line">    public abstract void getAccountInfo(Request request, IAccountCallback cb);</div><div class="line"></div><div class="line">    public final IBinder getIBinder() &#123;</div><div class="line">        return mTransport.asBinder();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>定义的业务接口IAccountAPI.aidl,文件，compile后生成对应的aidl文件，其中IAccountAPI.Stub是继承了Binder并实现了IAccountAPI接口的类，<br>在这里我做一层装的，定义Transport类，继承IAccountAPI.Stub并重写业务接口中的2个方法。同时定义2个抽象方法提供给外部具体实现。<br>getIBinder()返回绑定的Binder对象。</p>
+<h2 id="AccountImp类"><a href="#AccountImp类" class="headerlink" title="AccountImp类"></a>AccountImp类</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">public class AccountImp extends AbstractAccount &#123;</div><div class="line"></div><div class="line">    //如果需要使用Context</div><div class="line">    private Context mContext;</div><div class="line"></div><div class="line">    public AccountImp(Context context) &#123;</div><div class="line">        this.mContext = context;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public String getNameInfo() &#123;</div><div class="line">        //这里直接返回测试数据</div><div class="line">        return &quot;张三and李四&quot;;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void getAccountInfo(Request request, IAccountCallback cb) &#123;</div><div class="line">        Account account = new Account();</div><div class="line">        account.name = &quot;lisx&quot;;</div><div class="line">        account.age = 27;</div><div class="line">        //这里在包装一层对象，方便返回更多信息</div><div class="line">        Response response = new Response();</div><div class="line">        response.account = account;</div><div class="line">        try &#123;</div><div class="line">            //这里直接使用接口，回调数据对象、当然也可以直接return返回，取决于自己定义的aidl接口</div><div class="line">            cb.onResponse(response);</div><div class="line">        &#125; catch (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>具体的服务端实现类，数据的返回，可以return，或者类似接口回调（IAccountCallback，作用：异步回调客户端）</p>
+<h2 id="AccountService类"><a href="#AccountService类" class="headerlink" title="AccountService类"></a>AccountService类</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">public class AccountService extends Service &#123;</div><div class="line"></div><div class="line">    private static AccountImp accountImp;</div><div class="line"></div><div class="line">    public AccountService() &#123;</div><div class="line">        accountImp = new AccountImp(this);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public IBinder onBind(Intent intent) &#123;</div><div class="line">        return accountImp.getIBinder();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public int onStartCommand(Intent intent, int flags, int startId) &#123;</div><div class="line">        return START_REDELIVER_INTENT;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>简单的服务类accountImp.getIBinder(),返回aidl绑定的IBinder对象</p>
+<h2 id="AndroidManifest-xml类"><a href="#AndroidManifest-xml类" class="headerlink" title=" AndroidManifest.xml类"></a> AndroidManifest.xml类</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;service</div><div class="line">    android:name=&quot;.auth.AccountService&quot;</div><div class="line">    android:exported=&quot;true&quot;&gt;</div><div class="line">    &lt;intent-filter&gt;</div><div class="line">        &lt;action android:name=&quot;com.putao.ptx.kotlin.BIND_ACCOUNT_SERVICE&quot; /&gt;</div><div class="line">    &lt;/intent-filter&gt;</div><div class="line">&lt;/service&gt;</div></pre></td></tr></table></figure>
+<p>注册service，注意action，对应客户端启动绑定服务时一定要保持一致。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title=" 总结"></a> 总结</h2><p> 至此服务端代码算是写完(具体原理最后分析)，其中有许多细节需要注意：<br> (1）aidl文件写好后，编译gradle命令 compileDebugAidl,或者androidstudio右边的gradle-&gt;other-&gt;compileDebugAidl。<br> (2）编译后会生成对应java文件，在当前moudle下的build-&gt;genrated-&gt;source-&gt;debug中，这个java文件请一定仔细查看，查看对应包名，数据类型，stub等。<br><img src="http://opdge5lf7.bkt.clouddn.com/aidl_7.png" alt="image"><br> (3）aidl的自定义数据类型 Account.aidl 注意parcelable 小写，对应的java的的实体Account要实现Parcelable并且包名一定要一致;<br> (4）AccountService在AndroidManifest中需要注册，并设置android:exported=”true”允许外部访问。</p>
+<h1 id="aidl客户端实现"><a href="#aidl客户端实现" class="headerlink" title=" aidl客户端实现"></a> aidl客户端实现</h1><h2 id="AccountManager类（本篇博客精华所在，其他内容网上大同小异，客户端的使用以及本类的处理方法才是我写这篇博客的原因）"><a href="#AccountManager类（本篇博客精华所在，其他内容网上大同小异，客户端的使用以及本类的处理方法才是我写这篇博客的原因）" class="headerlink" title=" AccountManager类（本篇博客精华所在，其他内容网上大同小异，客户端的使用以及本类的处理方法才是我写这篇博客的原因）"></a> AccountManager类（本篇博客精华所在，其他内容网上大同小异，客户端的使用以及本类的处理方法才是我写这篇博客的原因）</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div></pre></td><td class="code"><pre><div class="line">public class AccountManager &#123;</div><div class="line"></div><div class="line">    private static final String TAG = AccountManager.class.getSimpleName();</div><div class="line">    //要绑定服务端的包名</div><div class="line">    private static final String PACKAGE_ACCOUNT = &quot;com.putao.ptx.kotlin&quot;;</div><div class="line">    //要绑定对应服务端的action</div><div class="line">    private static final String BIND_AUTH_SERVICE = &quot;com.putao.ptx.kotlin.BIND_ACCOUNT_SERVICE&quot;;</div><div class="line">    //当前上下文</div><div class="line">    private Context context;</div><div class="line">    //标记客户端是否连接服务端成功</div><div class="line">    private boolean connected;</div><div class="line">    //业务接口</div><div class="line">    private IAccountAPI api;</div><div class="line">    //同步锁</div><div class="line">    private final Object lock = new Object();</div><div class="line">    //更新界面Handler</div><div class="line">    private Handler mHandler;</div><div class="line"></div><div class="line">    //当前AccountManager的构造方法，实际操作AccountManager应该是单例。</div><div class="line">    public AccountManager(Context context, Handler handler) &#123;</div><div class="line">        this.context = context.getApplicationContext();</div><div class="line">        this.mHandler = handler;</div><div class="line">        bindServiceIfNeeded();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 说明：绑定service</div><div class="line">     */</div><div class="line">    private void bindServiceIfNeeded() &#123;</div><div class="line">        if (!connected) &#123;</div><div class="line">            Intent intent = new Intent(BIND_AUTH_SERVICE);</div><div class="line">            intent.setPackage(PACKAGE_ACCOUNT);</div><div class="line">            boolean result = context.bindService(intent, new ServiceConnection() &#123;</div><div class="line"></div><div class="line">                @Override</div><div class="line">                public void onServiceConnected(ComponentName name, IBinder service) &#123;</div><div class="line">                    api = IAccountAPI.Stub.asInterface(service);</div><div class="line">                    synchronized (lock) &#123;</div><div class="line">                        connected = true;</div><div class="line">                        lock.notifyAll();</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                @Override</div><div class="line">                public void onServiceDisconnected(ComponentName name) &#123;</div><div class="line">                    api = null;</div><div class="line">                    synchronized (lock) &#123;</div><div class="line">                        connected = false;</div><div class="line">                        lock.notifyAll();</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;, Context.BIND_AUTO_CREATE);</div><div class="line">            Log.d(TAG, &quot;result:&quot; + result);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 说明：等待客户端绑定服务端并返回是否绑定成功</div><div class="line">     * return boolean</div><div class="line">     */</div><div class="line">    private boolean waitForAccess() &#123;</div><div class="line">        long start = System.currentTimeMillis();</div><div class="line">        synchronized (lock) &#123;</div><div class="line">            if (!connected) &#123;</div><div class="line">                try &#123;</div><div class="line">                    lock.wait(2000);</div><div class="line">                &#125; catch (InterruptedException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        Log.d(TAG, &quot;waitForAccess spent:&quot; + (System.currentTimeMillis() - start));</div><div class="line">        return connected;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 说明：封装，实际调用业务接口getName()，获取服务端返回的数据（同步）</div><div class="line">     * return String</div><div class="line">     */</div><div class="line">    public String getName() &#123;</div><div class="line">        bindServiceIfNeeded();</div><div class="line">        //同步获取数据，会阻塞住线程</div><div class="line">        String name = &quot;&quot;;</div><div class="line">        if (waitForAccess()) &#123;</div><div class="line">            try &#123;</div><div class="line">                name = api.getName();</div><div class="line">            &#125; catch (Exception e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        return name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    /**</div><div class="line">     * 说明：封装，实际调用业务接口getAccount()，获取服务端返回的数据（异步）</div><div class="line">     * 由于是异步所以不能直接返回数据，拿到数据可自行处理。</div><div class="line">     * return String</div><div class="line">     */</div><div class="line">    public void getAccount() &#123;</div><div class="line">        bindServiceIfNeeded();</div><div class="line">        new Thread(new Runnable() &#123;</div><div class="line">            @Override</div><div class="line">            public void run() &#123;</div><div class="line">                if (waitForAccess()) &#123;</div><div class="line">                    try &#123;</div><div class="line">                        Request request = new Request();</div><div class="line">                        api.getAccount(request, new IAccountCallback.Stub() &#123;</div><div class="line">                            @Override</div><div class="line">                            public void onResponse(Response response) throws RemoteException &#123;</div><div class="line">                                Log.d(&quot;lisx&quot;,response.account.toString());</div><div class="line">                                Message msg = new Message();</div><div class="line">                                msg.obj = response;</div><div class="line">                                mHandler.sendMessage(msg);</div><div class="line">                            &#125;</div><div class="line">                        &#125;);</div><div class="line">                    &#125; catch (Exception e) &#123;</div><div class="line">                        e.printStackTrace();</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">            &#125;</div><div class="line">        &#125;).start();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先AccountManager类的构造方法赋值，并调用bindServiceIfNeeded()尝试去绑定service端，我们在看<br>bindServiceIfNeeded()方法,先判断connected，如果没有绑定就创建Intent，设置服务端包名和要绑定<br>service的action，之后context调用bindService（…）绑定服务，其中有两个参数，一个intent（不多解释），<br>一个ServiceConnection对象，它是用来回掉绑定service是否成功的结果，成功回掉onServiceConnected（…）<br>失败回掉onServiceDisconnected(…)。</p>
+<p>我们先看回掉成功后的onServiceConnected(ComponentName name, IBinder service)方法，参见代码：<br>api =IAccountAPI.Stub.asInterface(service); 这句我们拿到绑定服务端成功后返回的代理对象api，<br>之后我们有一个同步代码块，其中有一个lock同步锁，为什么要有这个呢？我们思考一个问题，客户端绑定服务端是一个过程(具体的绑定以及原理不是本文重点)，绑定结果通过回掉的形式返回结果我们就可以看出来，经过测试这个过程一般是毫秒级别的，同时我做过测试，很多个客户端去绑定service服务端，一般也会在2秒之内返回结果。当然系统卡顿，同时运行的进程很多，内存占用量大等等，都会导致这个绑定时间变长。我们在使用这个api对象的时候，至少需要等到绑定成功并返回结果后才能使用，否则使用时api对象时会报null指针异常，那么绑定服务端回调结果这个时机是不确定的，但是外部通常调用api的方法时候是一次性的，也就是说你调用一次api对象的放法不一定会返回正确的值（调用api对象方法的时候，api刚好是null的，即使你有非null判断，只能保证不会crash，方法执行完，并不会有结果返回）。言归正传，synchronized同步，防止多次绑定返回结果，connected标记是否成功，lock.notifyAll()，成功后及时通知api对象可以使用了。</p>
+<p>然后我们在看waitForAccess()方法，synchronized同步，防止多次调用，同时判断connected的值，如果还没有绑定当前线程，就会等待2秒lock.wait(2000)，如果绑定就会直接返回connected的值，此方法会同步阻塞当前线程。</p>
+<p>我们在看封装的具体getName()方法，它执行之前会去调用bindServiceIfNeeded()方法绑定一次，之后调用waitForAccess()方法判断是否已经绑定成功，api对象是否可用，确定可用后，然后在执行实际的api.getName()方法，获取service提供的数据。其中有个细节就是waitForAccess()如果在等待中，如果绑定成功或者失败，那么onServiceConnected（…）和onServiceDisconnected(…)中的lock.notifyAll()就会立即通知waitForAccess()中的lock.wait(2000)结束等待并返回结果。</p>
+<p>最后我们在看封装的具体getAccount()方法，首先启动一个线程，保证不阻塞当前线程，同时在线程的run方法中调用waitForAccess()判断，之后，api.getAccount(…）调用实际方法，唯一不同的是它是以回调的形式携带具体的service端提供的数据。拿到数据之后大家就可以自行处理的，这边这是简单的handler发送出去更新了下demo界面显示。（为什么要用回掉的形式来携带service的提供的数据呢，大家可以细想下微信授权登录的流程并返回信息，篇幅所限，这里不多做解释，有兴趣可以自己研究为什么这样写）。</p>
+<h1 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h1><p>android的IPC大多基于Binder机制，这里所说的aidl也是基于Binder实现一种形式，最后一张图总结下aidl的工作流程，至于原理有兴趣的<br>我们可以共同讨论。</p>
+<p><img src="http://opdge5lf7.bkt.clouddn.com/aidl_8.png" alt="image"></p>
+<p>最后赋上sample的github地址 <a href="https://github.com/lishuxiong/lisxAidl.git" target="_blank" rel="external">https://github.com/lishuxiong/lisxAidl.git</a></p>
+      
+    </div>
+    
+  </div>
+  
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2017/07/25/android中aidl详解/">android中AIDL详解</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">lisx</a></p>
+        <p><span>发布时间:</span>2017-07-25, 14:01:08</p>
+        <p><span>最后更新:</span>2017-07-26, 20:53:44</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2017/07/25/android中aidl详解/" title="android中AIDL详解">/2017/07/25/android中aidl详解/</a>
+            <span class="copy-path" data-clipboard-text="原文: /2017/07/25/android中aidl详解/　　作者: lisx" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2017/05/27/java设计模式-工厂模式/">
+                    java设计模式-工厂模式
+                </a>
+            </div>
+        
+    </nav>
+  
+</article>
+<div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#跨进程通讯"><span class="toc-number">1.</span> <span class="toc-text">跨进程通讯</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#AIDL"><span class="toc-number">2.</span> <span class="toc-text">AIDL</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#aidl的创建"><span class="toc-number">3.</span> <span class="toc-text">aidl的创建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#首先定义aidl接口文件"><span class="toc-number">3.1.</span> <span class="toc-text">首先定义aidl接口文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#定义业务接口，和自定义数据类型aidl文件"><span class="toc-number">3.2.</span> <span class="toc-text">定义业务接口，和自定义数据类型aidl文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#定义实际的数据结构，注意包名和结构一定和aidl中的一致。"><span class="toc-number">3.3.</span> <span class="toc-text">定义实际的数据结构，注意包名和结构一定和aidl中的一致。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#客户端对应aidl文件和服务端一样。可以参照对比"><span class="toc-number">3.4.</span> <span class="toc-text">客户端对应aidl文件和服务端一样。可以参照对比</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#aidl服务端实现"><span class="toc-number">4.</span> <span class="toc-text">aidl服务端实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#AbstractAccount类"><span class="toc-number">4.1.</span> <span class="toc-text">AbstractAccount类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AccountImp类"><span class="toc-number">4.2.</span> <span class="toc-text">AccountImp类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AccountService类"><span class="toc-number">4.3.</span> <span class="toc-text">AccountService类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AndroidManifest-xml类"><span class="toc-number">4.4.</span> <span class="toc-text"> AndroidManifest.xml类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.5.</span> <span class="toc-text"> 总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#aidl客户端实现"><span class="toc-number">5.</span> <span class="toc-text"> aidl客户端实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#AccountManager类（本篇博客精华所在，其他内容网上大同小异，客户端的使用以及本类的处理方法才是我写这篇博客的原因）"><span class="toc-number">5.1.</span> <span class="toc-text"> AccountManager类（本篇博客精华所在，其他内容网上大同小异，客户端的使用以及本类的处理方法才是我写这篇博客的原因）</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结-1"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录" title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+    <div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"android中AIDL详解　| lisx　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+    
+
+
+<div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2017/05/27/java设计模式-工厂模式/" title="下一篇: java设计模式-工厂模式">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/07/25/android中aidl详解/">android中AIDL详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/27/java设计模式-工厂模式/">java设计模式-工厂模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/20/java设计模式-单例模式/">java设计模式-单例模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/16/ImageView的scaleType属性分析结果/">ImageView的scaleType属性分析结果</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/05/15/AndroidStudio及异常问题记录/">AndroidStudio及异常问题记录</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/04/26/自定义CircleGroup/">自定义CircleGroup</a></li></ul>
+
+
+    <script>
+        
+    </script></div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2016-2017 lisx
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style="display:none">
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style="display:none">
+                        <span id="page-visit" title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    <script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+<script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide()" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        $("a[target=_blank]").removeAttr("target");
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
